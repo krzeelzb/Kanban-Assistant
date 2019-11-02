@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const express = require('express');
 const Card = require('../models/card');
 const Column = require('../models/column');
@@ -16,7 +17,6 @@ cardRouter.post('/', async (req, res, next) => {
         });
         const result = await newCard.save();
         const column = await Column.findOne({columnId}).exec();
-        console.log(column)
         if (!column) {
             return res
                 .status(404)
@@ -36,5 +36,33 @@ cardRouter.post('/', async (req, res, next) => {
     }
 });
 
+
+cardRouter.post('/getAllCards', async (req, res) => {
+    try {
+        const {columnIds} = req.body;
+        let totalCards = [];
+        if (columnIds && columnIds.length > 0) {
+            let i = 0;
+            for (const columnId of columnIds) {
+
+                const cards = await  Card.find({column: String(columnId)}).select('cardId title').exec();
+                console.log(cards)
+
+                if (cards.length > 0) {
+                    totalCards.push(cards);
+                }
+
+            }
+            return res.status(200).json({message: 'Success', cards: totalCards});
+        }
+    } catch (error) {
+        return res
+            .status(404)
+            .json({message: "Column of provided id doesn't exist"});
+    }
+});
+
+
+//TODO: more routes
 
 module.exports = cardRouter;
