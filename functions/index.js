@@ -11,8 +11,6 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const app = dialogflow({debug: false});
-
-
 const axios = require('axios');
 
 app.intent('createNewCard', async (conv, params) => {
@@ -83,7 +81,6 @@ app.intent('getCardsFromColumn', async (conv, params) => {
 
 });
 
-//TODO: naprawic zeby sie wyswietlało jak potrzeba, jak est wiecej w jakim zedzie to było wiece
 app.intent('board', async (conv, params) => {
     return await axios.get("http://localhost:5000/api/columns/all")
         .then((res) => {
@@ -117,11 +114,8 @@ function transpose(original) {
     var copy = [];
     for (var i = 0; i < original.length; ++i) {
         for (var j = 0; j < original[i].length; ++j) {
-            // skip undefined values to preserve sparse array
             if (original[i][j] === undefined) continue;
-            // create row if it doesn't exist yet
             if (copy[j] === undefined) copy[j] = [];
-            // swap the x and y coords for the copy
             copy[j][i] = original[i][j];
         }
     }
