@@ -3,10 +3,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const {
-    dialogflow,
-    Permission,
-    Suggestions,
-    List, Image, BrowseCarouselItem, BrowseCarousel
+    dialogflow, Permission,
+    Suggestions, Table, List, Image, BrowseCarouselItem, BrowseCarousel
 } = require('actions-on-google');
 
 const functions = require('firebase-functions');
@@ -39,8 +37,10 @@ app.intent('deleteCard', async (conv, params) => {
     console.log(params);
     return axios.delete("http://localhost:5000/api/cards/delete", {
         data:
-            {"cardId": taskToDelete
-    }}).then( (res) => {
+            {
+                "cardId": taskToDelete
+            }
+    }).then((res) => {
         conv.ask("Removing task named " + taskToDelete)
     }).catch((e) => {
         conv.ask("error");
@@ -75,8 +75,7 @@ app.intent('getCardsFromColumn', async (conv, params) => {
         const cardIds = res.data.columns[0].cardIds;
         console.log(cardIds);
         // console.log(columns.[])
-        conv.ask("You have the following cards in "+ fromColumn+" list: "+cardIds);
-
+        conv.ask("You have the following cards in " + fromColumn + " list: " + cardIds);
     }).catch((e) => {
         console.log(e);
         conv.ask("error");
@@ -84,6 +83,52 @@ app.intent('getCardsFromColumn', async (conv, params) => {
 
 });
 
+//TODO: naprawic zeby sie wyswietlało jak potrzeba, jak est wiecej w jakim zedzie to było wiece
+app.intent('board', async (conv, params) => {
+    return await axios.get("http://localhost:5000/api/columns/all")
+        .then((res) => {
+            const columns = res.data.columns;
+            const titles = columns.map(item => item.title);
+            const cards = columns.map(item => item.cardIds);
+            const maxLength = Math.max(...cards.map(el => el.length));
+            let rows = transpose(cards);
+
+            for (let i = 0; i < rows.length; i++) {
+                for (let j = 0; j < titles.length; j++) {
+                    if (!(rows[i][j])) {
+                        rows[i][j] = " ";
+                    }
+                }
+            }
+            conv.ask("Here is your board: ");
+            conv.ask(new Table({
+                dividers: true,
+                columns: titles,
+                rows:rows,
+            }));
+        }).catch((e) => {
+            console.log(e);
+            conv.ask("error");
+        })
+
+});
+
+function transpose(original) {
+    var copy = [];
+    for (var i = 0; i < original.length; ++i) {
+        for (var j = 0; j < original[i].length; ++j) {
+            // skip undefined values to preserve sparse array
+            if (original[i][j] === undefined) continue;
+            // create row if it doesn't exist yet
+            if (copy[j] === undefined) copy[j] = [];
+            // swap the x and y coords for the copy
+            copy[j][i] = original[i][j];
+        }
+    }
+    return copy;
+}
+
+//TODO: welcome intent z listą rzeczy które można zrobić
 // exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
 
 express().use(bodyParser.json(), app).listen(process.env.PORT || 8080);
