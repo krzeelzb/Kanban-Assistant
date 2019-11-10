@@ -7,8 +7,96 @@ const cardRouter = express.Router();
 
 //new Card
 cardRouter.post('/', async (req, res, next) => {
+    const {title, columnId, cardId} = req.body;
+    addCard(req, res, title, columnId, cardId);
+});
+
+
+cardRouter.post('/getAllCards', async (req, res) => {
     try {
-        const {title, columnId, cardId} = req.body;
+        const {columnIds} = req.body;
+        let totalCards = [];
+        if (columnIds && columnIds.length > 0) {
+            let i = 0;
+            for (const columnId of columnIds) {
+                const cards = await Card.find({column: String(columnId)}).select('cardId title').exec();
+                if (cards.length > 0) {
+                    totalCards.push(cards);
+                }
+            }
+            return res.status(200).json({message: 'Success', cards: totalCards});
+        }
+    } catch (error) {
+        return res
+            .status(404)
+            .json({message: "Column of provided id doesn't exist"});
+    }
+});
+
+cardRouter.delete('/delete', async (req, res) => {
+    const {cardId} = req.body;
+    deleteCard(req, res, cardId)
+
+});
+
+cardRouter.post(
+    '/moveCard',
+    async (req, res, next) => {
+        try {
+            const {
+                originColumnId,
+                destColumnId,
+                cardId
+            } = req.body;
+            if (
+                !(
+                    originColumnId &&
+                    destColumnId &&
+                    cardId
+                )
+            ) {
+                return res.status(400).json({message: 'some fields are missing'});
+            }
+            deleteCard(req, res, cardId);
+            addCard(req, res, cardId, destColumnId, cardId);
+            return res
+                .status(200)
+                .json({message: 'Card moved succesfully'});
+        } catch (e) {
+            return res
+                .status(404)
+                .json({message: "error"});
+        }
+    }
+);
+
+// helpers
+const deleteCard = async (req, res, cardId) => {
+    try {
+        const card = await Card.findOne({cardId: cardId}).select('cardId column').exec();
+        const column = await Column.findOne({columnId: card.column}).exec();
+        if (!column) {
+            return res
+                .status(404)
+                .json({message: "Column of provided id doesn't exist"});
+        }
+        let cardIds = Array.from(column.cardIds);
+        cardIds = cardIds.filter((i => i !== cardId));
+        column.set({cardIds: cardIds});
+        const result2 = await column.save();
+        await Card.findOne({cardId: cardId}).remove().exec();
+        return res.status(201).json({
+            message: 'deleted',
+        });
+    } catch (error) {
+        return res
+            .status(404)
+            .json({message: "error"});
+    }
+};
+
+const addCard = async (req, res, title, columnId, cardId) => {
+    try {
         await Card.find().exec();
         const newCard = new Card({
             title,
@@ -32,37 +120,11 @@ cardRouter.post('/', async (req, res, next) => {
             column: result2,
         });
     } catch (e) {
-        console.log(e)
-    }
-});
-
-
-cardRouter.post('/getAllCards', async (req, res) => {
-    try {
-        const {columnIds} = req.body;
-        let totalCards = [];
-        if (columnIds && columnIds.length > 0) {
-            let i = 0;
-            for (const columnId of columnIds) {
-
-                const cards = await  Card.find({column: String(columnId)}).select('cardId title').exec();
-                console.log(cards)
-
-                if (cards.length > 0) {
-                    totalCards.push(cards);
-                }
-
-            }
-            return res.status(200).json({message: 'Success', cards: totalCards});
-        }
-    } catch (error) {
         return res
             .status(404)
-            .json({message: "Column of provided id doesn't exist"});
+            .json({message: "error"});
     }
-});
-
-
+}
 //TODO: more routes
 
 module.exports = cardRouter;

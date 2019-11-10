@@ -21,9 +21,9 @@ app.intent('createNewCard', async (conv, params) => {
     let taskName = params.taskName;
     console.log(params);
 
-    return await axios.post("http://localhost:5000/api/cards", {
+    return await axios.post("http://localhost:4000/api/cards", {
             "title": taskName,
-            "columnId": "1",
+            "columnId": "column_todo",
             "cardId": taskName
 
         },
