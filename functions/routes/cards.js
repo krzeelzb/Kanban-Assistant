@@ -71,30 +71,21 @@ cardRouter.post(
 // helpers
 const deleteCard = async (req, res, cardId) => {
     try {
-        console.log(cardId)
         const card = await Card.findOne({cardId: cardId}).select('cardId column').exec();
-        console.log(card)
         const column = await Column.findOne({columnId: card.column}).exec();
         if (!column) {
             return res.status(404).json()
                 // .json({message: "Column of provided id doesn't exist"});
         }
-        console.log(column)
         let cardIds = Array.from(column.cardIds);
-        console.log("1")
         cardIds = cardIds.filter((i => i !== cardId));
-        console.log("12")
         column.set({cardIds: cardIds});
-        console.log("13")
         const result2 = await column.save();
-        console.log("14")
         await Card.findOne({cardId: cardId}).remove().exec();
-        console.log("15")
         return res.status(201).json();
     } catch (error) {
         return res
             .status(404).json()
-            // .json({message: "error"});
     }
 };
 

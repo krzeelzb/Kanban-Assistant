@@ -63,8 +63,26 @@ app.intent('moveCard', async (conv, params) => {
         conv.ask("error");
     })
 
-})
-;
+});
+
+//TODO: ładniejsza lista zadan do wykoniania
+app.intent('getCardsFromColumn', async (conv, params) => {
+    let fromColumn = params.columnName;
+    console.log(params);
+    return await axios.post("http://localhost:5000/api/columns/fetchColumnById", {
+        "columnId": fromColumn,
+    }).then((res) => {
+        const cardIds = res.data.columns[0].cardIds;
+        console.log(cardIds);
+        // console.log(columns.[])
+        conv.ask("You have the following cards in "+ fromColumn+" list: "+cardIds);
+
+    }).catch((e) => {
+        console.log(e);
+        conv.ask("error");
+    })
+
+});
 
 // exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
 
