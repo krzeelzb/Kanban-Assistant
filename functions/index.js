@@ -13,6 +13,15 @@ admin.initializeApp();
 const app = dialogflow({debug: false});
 const axios = require('axios');
 
+
+app.intent('Default Welcome Intent', (conv, params)=>{
+    conv.ask("Welcome to Kanban Assistant. I can help you orginze ypur Kanban board. Here is what I can do:")
+    conv.ask(new Suggestions('Show me my Board','Add new Card','Delete Card','Move Card'))
+
+});
+
+
+
 app.intent('createNewCard', async (conv, params) => {
     let taskName = params.taskName;
     console.log(params);
@@ -27,6 +36,8 @@ app.intent('createNewCard', async (conv, params) => {
             "Content-type": "application/json"
         }).then((res) => {
         conv.ask("new task created named: " + params.taskName)
+        conv.ask(new Suggestions('Show me my Board','Add new Card','Delete Card','Move Card'))
+
     })
 });
 
@@ -40,6 +51,8 @@ app.intent('deleteCard', async (conv, params) => {
             }
     }).then((res) => {
         conv.ask("Removing task named " + taskToDelete)
+        conv.ask(new Suggestions('Show me my Board','Add new Card','Delete Card','Move Card'))
+
     }).catch((e) => {
         conv.ask("error");
     })
@@ -57,6 +70,8 @@ app.intent('moveCard', async (conv, params) => {
     }).then(async (res) => {
 
         conv.ask("Moving task named " + params.taskName + " to column: " + toColumn)
+        conv.ask(new Suggestions('Show me my Board','Add new Card','Delete Card','Move Card'))
+
     }).catch((e) => {
         conv.ask("error");
     })
@@ -74,6 +89,8 @@ app.intent('getCardsFromColumn', async (conv, params) => {
         console.log(cardIds);
         // console.log(columns.[])
         conv.ask("You have the following cards in " + fromColumn + " list: " + cardIds);
+        conv.ask(new Suggestions('Show me my Board','Add new Card','Delete Card','Move Card'))
+
     }).catch((e) => {
         console.log(e);
         conv.ask("error");
@@ -103,6 +120,8 @@ app.intent('board', async (conv, params) => {
                 columns: titles,
                 rows:rows,
             }));
+            conv.ask(new Suggestions('Show me my Board','Add new Card','Delete Card','Move Card'))
+
         }).catch((e) => {
             console.log(e);
             conv.ask("error");
