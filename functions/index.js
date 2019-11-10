@@ -21,11 +21,10 @@ app.intent('createNewCard', async (conv, params) => {
     let taskName = params.taskName;
     console.log(params);
 
-    return await axios.post("http://localhost:4000/api/cards", {
+    return await axios.post("http://localhost:5000/api/cards", {
             "title": taskName,
             "columnId": "column_todo",
             "cardId": taskName
-
         },
         {
             "Accept": "application/json",
@@ -33,23 +32,39 @@ app.intent('createNewCard', async (conv, params) => {
         }).then((res) => {
         conv.ask("new task created named: " + params.taskName)
     })
-
 });
 
-app.intent('deleteCard', (conv, params) => {
-    let taskToDekete = params.taskName;
+app.intent('deleteCard', async (conv, params) => {
+    let taskToDelete = params.taskName;
     console.log(params);
-    conv.ask("Removing task named " + params.taskName)
-
+    return axios.delete("http://localhost:5000/api/cards/delete", {
+        data:
+            {"cardId": taskToDelete
+    }}).then( (res) => {
+        conv.ask("Removing task named " + taskToDelete)
+    }).catch((e) => {
+        conv.ask("error");
+    })
 });
-app.intent('moveCard', (conv, params) => {
-    let taskToDekete = params.taskName;
+
+app.intent('moveCard', async (conv, params) => {
+    let taskToMove = params.taskName;
     let toColumn = params.columnNameTo;
+    let fromColumn = params.columnNameFrom;
     console.log(params);
-    conv.ask("Moving task named " + params.taskName + " to column: " + toColumn)
+    return await axios.post("http://localhost:5000/api/cards/moveCard", {
+        "originColumnId": fromColumn,
+        "destColumnId": toColumn,
+        "cardId": taskToMove
+    }).then(async (res) => {
 
-});
+        conv.ask("Moving task named " + params.taskName + " to column: " + toColumn)
+    }).catch((e) => {
+        conv.ask("error");
+    })
 
+})
+;
 
 // exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
 

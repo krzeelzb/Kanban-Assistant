@@ -11,7 +11,6 @@ cardRouter.post('/', async (req, res, next) => {
     addCard(req, res, title, columnId, cardId);
 });
 
-
 cardRouter.post('/getAllCards', async (req, res) => {
     try {
         const {columnIds} = req.body;
@@ -34,7 +33,9 @@ cardRouter.post('/getAllCards', async (req, res) => {
 });
 
 cardRouter.delete('/delete', async (req, res) => {
+
     const {cardId} = req.body;
+    console.log(req)
     deleteCard(req, res, cardId)
 
 });
@@ -48,24 +49,21 @@ cardRouter.post(
                 destColumnId,
                 cardId
             } = req.body;
-            if (
-                !(
-                    originColumnId &&
+            if (!(
                     destColumnId &&
                     cardId
-                )
-            ) {
-                return res.status(400).json({message: 'some fields are missing'});
+                )) {
+                return res.status(400).json();
             }
-            deleteCard(req, res, cardId);
-            addCard(req, res, cardId, destColumnId, cardId);
+            await deleteCard(req, res, cardId);
+            await addCard(req, res, cardId, destColumnId, cardId);
             return res
                 .status(200)
-                .json({message: 'Card moved succesfully'});
+                // .json({message: 'Card moved succesfully'});
         } catch (e) {
             return res
                 .status(404)
-                .json({message: "error"});
+                // .json({message: "error"});
         }
     }
 );
@@ -73,25 +71,30 @@ cardRouter.post(
 // helpers
 const deleteCard = async (req, res, cardId) => {
     try {
+        console.log(cardId)
         const card = await Card.findOne({cardId: cardId}).select('cardId column').exec();
+        console.log(card)
         const column = await Column.findOne({columnId: card.column}).exec();
         if (!column) {
-            return res
-                .status(404)
-                .json({message: "Column of provided id doesn't exist"});
+            return res.status(404).json()
+                // .json({message: "Column of provided id doesn't exist"});
         }
+        console.log(column)
         let cardIds = Array.from(column.cardIds);
+        console.log("1")
         cardIds = cardIds.filter((i => i !== cardId));
+        console.log("12")
         column.set({cardIds: cardIds});
+        console.log("13")
         const result2 = await column.save();
+        console.log("14")
         await Card.findOne({cardId: cardId}).remove().exec();
-        return res.status(201).json({
-            message: 'deleted',
-        });
+        console.log("15")
+        return res.status(201).json();
     } catch (error) {
         return res
-            .status(404)
-            .json({message: "error"});
+            .status(404).json()
+            // .json({message: "error"});
     }
 };
 
@@ -107,24 +110,25 @@ const addCard = async (req, res, title, columnId, cardId) => {
         const column = await Column.findOne({columnId}).exec();
         if (!column) {
             return res
-                .status(404)
-                .json({message: "Column of provided id doesn't exist"});
+                .status(404).json();
+                // .json({message: "Column of provided id doesn't exist"});
         }
         const newCardIds = Array.from(column.cardIds);
         newCardIds.push(result.cardId);
         column.set({cardIds: newCardIds});
         const result2 = await column.save();
-        return res.status(201).json({
-            message: 'new card is created and also cardIds in column is also updated',
-            card: result,
-            column: result2,
-        });
+        return res.status(201).json();
+        // return res.status(201).json({
+        //     // message: 'new card is created and also cardIds in column is also updated',
+        //     // card: result,
+        //     // column: result2,
+        // });
     } catch (e) {
         return res
-            .status(404)
-            .json({message: "error"});
+            .status(404).json();
+            // .json({message: "error"});
     }
-}
+};
 //TODO: more routes
 
 module.exports = cardRouter;
