@@ -74,6 +74,7 @@ app.intent('Default Welcome Intent', (conv) => {
     }));
 });
 
+//TODO: make it work
 const SELECTED_ITEM_CONTEXTS = {
     'BOARD': 'board',
     'createNewCard': 'createnewcard',
