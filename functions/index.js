@@ -12,15 +12,12 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 const app = dialogflow({debug: false});
 const axios = require('axios');
-
+const {SignIn} = require('actions-on-google');
 
 app.intent('Default Welcome Intent', (conv, params)=>{
     conv.ask("Welcome to Kanban Assistant. I can help you orginze ypur Kanban board. Here is what I can do:")
     conv.ask(new Suggestions('Show me my Board','Add new Card','Delete Card','Move Card'))
-
 });
-
-
 
 app.intent('createNewCard', async (conv, params) => {
     let taskName = params.taskName;
@@ -126,7 +123,6 @@ app.intent('board', async (conv, params) => {
             console.log(e);
             conv.ask("error");
         })
-
 });
 
 function transpose(original) {

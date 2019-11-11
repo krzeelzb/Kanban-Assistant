@@ -60,6 +60,6 @@ userRouter.post('/login', async(req, res) => {
         throw new Error(e.message);
     }
 
-})
+});
 
 module.exports = userRouter;
