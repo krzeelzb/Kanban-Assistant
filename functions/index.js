@@ -10,34 +10,28 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const app = dialogflow({debug: false});
-
-
 const axios = require('axios');
 
 
 app.intent('Default Welcome Intent', (conv) => {
     conv.ask('Welcome to Kanban Board Assistant');
     if (!conv.surface.capabilities.has('actions.capability.SCREEN_OUTPUT')) {
-
         return;
     }
-
     conv.ask(new List({
-
         items: {
-            // Add the first item to the list
             'BOARD': {
                 synonyms: [
                     'Show me my board',
                     'Tell me my Kanban Board',
                     'Show me my Kanban Board',
                                    ],
-                title: 'Show me my Kanban Board',
+                title: 'Show Kanban Board',
                 description: 'See how your Kanban Board looks like',
-                // image: new Image({
-                //     url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwiRspG0pZHiAhWr-yoKHcdIA3QQjRx6BAgBEAU&url=https%3A%2F%2Fstat.gov.pl%2Fpodstawowe-dane%2F&psig=AOvVaw1tJjUu_Ts446LvvrbuYC_7&ust=1557589019220446',
-                //     alt: 'populacja',
-                // }),
+                image: new Image({
+                    url: 'https://image.flaticon.com/icons/png/512/2018/2018793.png',
+                    alt: 'populacja',
+                }),
             },
             'createNewCard': {
                 synonyms: [
@@ -46,83 +40,88 @@ app.intent('Default Welcome Intent', (conv) => {
                     'Create a new card named',
                 ],
                 title: 'New Card',
-                description: 'Do you have anythings else new to add?',
-                // image: new Image({
-                //     url: 'https://www.flaticon.com/authors/freepik',
-                //     alt: 'pracujący',
-                // }),
+                description: 'Add new cards to ypur To Do list',
+                image: new Image({
+                    url: "https://image.flaticon.com/icons/png/512/109/109691.png",
+                    alt: 'add',
+                }),
             },
-            // Add the third item to the list
-            // 'WIEK': {
-            //     synonyms: [
-            //         'sprawdź wiek',
-            //         'Powiedz mi coś o wieku ludzi',
-            //         'Chcę dowiedzieć się czegoś o wieku',
-            //         'Poprosiłbym o dane dotyczące wieku',
-            //         'Dane o wieku',
-            //         'Sprawdź dla mnie osoby w przedziale wiekowym'
-            //
-            //     ],
-            //     title: 'Dane dotyczące wieku',
-            //     description: 'Sprawdź liczbę osób w konkretym przedziale wiekowym w Twojej okolicy lub w wybranym przez Ciebie adresie',
-            //     // image: new Image({
-            //     //     url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjhmtevqJHiAhUox4sKHcNJAEsQjRx6BAgBEAU&url=https%3A%2F%2Fwww.casecured.com%2Fhome%2F2018%2F2%2F9%2Fage-is-relative&psig=AOvVaw20EYAAeX5-8rC6rN3hwGAK&ust=1557589815375614',
-            //     //     alt: 'wiek',
-            //     // }),
-            // },
+            'deleteCard': {
+                synonyms: [
+                    'Remove card',
+                    'Delete card',
+                    'Delete card named..',
+                ],
+                title: 'Remove Card',
+                description: 'Remove cards from Kanban Board',
+                image: new Image({
+                    url: 'https://image.flaticon.com/icons/png/512/61/61655.png',
+                    alt: 'delete',
+                }),
+            },
+            'moveCard': {
+                synonyms: [
+                    'Move card',
+                    'Move card from',
+                    'Please move card named..',
+                ],
+                title: 'Move Card',
+                description: 'Move card to diffrent list',
+                image: new Image({
+                    url: 'https://image.flaticon.com/icons/png/512/64/64787.png',
+                    alt: 'move',
+                }),
+            },
         },
     }));
 });
 
-//TODO: make it work
 const SELECTED_ITEM_CONTEXTS = {
     'BOARD': 'board',
     'createNewCard': 'createnewcard',
-
+    'deleteCard': 'deleteCard',
+    'moveCard': 'moveCard',
 };
 
 const SELECTED_ITEM_RESPONSES = {
-    'BOARD': 'Here is your board',
-    'createNewCard': 'What is it exactly?',
+    'BOARD': 'Type or say one of the following',
+    'createNewCard': 'Type or say one of the following',
+    'deleteCard': 'Type or say one of the following',
+    'moveCard': 'Type or say one of the following',
 };
 
 const SELECTED_ITEM_SUGGESTIONS = {
-    'BOARD': ['ul. Piękna 8, Warszawa', 'Moja lokalizacja'],
-    'createNewCard': ['Unit Testing', 'Peer tesing', 'Code review'],
+    'BOARD': ['Show me my Board', 'Tell me my Board'],
+    'createNewCard': ['Create new card', 'New thing to do'],
+    'deleteCard': ['Remove card', 'Delete card','Delete card named...'],
+    'moveCard': ['Move card', 'Move card from', 'Please move card named..'],
 };
 
 app.intent('actions.intent.OPTION', (conv, params, option) => {
     if (option && SELECTED_ITEM_RESPONSES.hasOwnProperty(option)) {
-
-        console.log("ooooooooooooooooooooooooooooo")
-        console.log(option)
-        console.log(conv.contexts);
         conv.contexts.set(SELECTED_ITEM_CONTEXTS[option], 2);
-        console.log("ccccccccccccccccccccccccccccccc");
-        console.log(conv.contexts);
     }
     conv.ask(`${SELECTED_ITEM_RESPONSES[option]}`);
-    // conv.ask(new Suggestions(SELECTED_ITEM_SUGGESTIONS[option]));
+    conv.ask(new Suggestions(SELECTED_ITEM_SUGGESTIONS[option]));
 
 });
 app.intent('createNewCard', async (conv, params) => {
 
-    console.log(conv.contexts)
-    console.log("I AM HEERE")
-    let taskName = params.taskName;
-    console.log(params);
+        console.log("I AM HEERE")
+        let taskName = params.taskName;
+        console.log(params);
 
-    return await axios.post("http://localhost:5000/api/cards", {
-            "title": taskName,
-            "columnId": "column_todo",
-            "cardId": taskName
-        },
-        {
-            "Accept": "application/json",
-            "Content-type": "application/json"
-        }).then((res) => {
-        conv.ask("new task created named: " + params.taskName)
-    })
+        return await axios.post("http://localhost:5000/api/cards", {
+                "title": taskName,
+                "columnId": "column_todo",
+                "cardId": taskName
+            },
+            {
+                "Accept": "application/json",
+                "Content-type": "application/json"
+            }).then((res) => {
+            conv.ask("new task created named: " + params.taskName)
+        })
 });
 
 app.intent('deleteCard', async (conv, params) => {
@@ -179,33 +178,32 @@ app.intent('getCardsFromColumn', async (conv, params) => {
 });
 
 app.intent('board', async (conv, params) => {
-    console.log(conv.contexts)
-    console.log("board")
-    return await axios.get("http://localhost:5000/api/columns/all")
-        .then((res) => {
-            const columns = res.data.columns;
-            const titles = columns.map(item => item.title);
-            const cards = columns.map(item => item.cardIds);
-            const maxLength = Math.max(...cards.map(el => el.length));
-            let rows = transpose(cards);
+        console.log("board")
+        return await axios.get("http://localhost:5000/api/columns/all")
+            .then((res) => {
+                const columns = res.data.columns;
+                const titles = columns.map(item => item.title);
+                const cards = columns.map(item => item.cardIds);
+                const maxLength = Math.max(...cards.map(el => el.length));
+                let rows = transpose(cards);
 
-            for (let i = 0; i < rows.length; i++) {
-                for (let j = 0; j < titles.length; j++) {
-                    if (!(rows[i][j])) {
-                        rows[i][j] = " ";
+                for (let i = 0; i < rows.length; i++) {
+                    for (let j = 0; j < titles.length; j++) {
+                        if (!(rows[i][j])) {
+                            rows[i][j] = " ";
+                        }
                     }
                 }
-            }
-            conv.ask("Here is your board: ");
-            conv.ask(new Table({
-                dividers: true,
-                columns: titles,
-                rows:rows,
-            }));
-        }).catch((e) => {
-            console.log(e);
-            conv.ask("error");
-        })
+                conv.ask("Here is your board: ");
+                conv.ask(new Table({
+                    dividers: true,
+                    columns: titles,
+                    rows: rows,
+                }));
+            }).catch((e) => {
+                console.log(e);
+                conv.ask("error");
+            })
 });
 
 function transpose(original) {
