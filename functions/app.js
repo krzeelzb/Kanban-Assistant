@@ -32,6 +32,7 @@ app.use(bodyParser.urlencoded({extended:false}));
 // app.use(bodyParser.json());
 app.options('*',cors());
 app.use(cors());
+app.use(cors({credentials : true, origin : ['localhost:3000']}))
 
 app.use('/api/users',userRouter);
 // app.use('/api/boards',boardRouter);

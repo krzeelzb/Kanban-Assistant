@@ -59,11 +59,9 @@ cardRouter.post(
             await addCard(req, res, cardId, destColumnId, cardId);
             return res
                 .status(200)
-                // .json({message: 'Card moved succesfully'});
         } catch (e) {
             return res
                 .status(404)
-                // .json({message: "error"});
         }
     }
 );

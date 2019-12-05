@@ -8,14 +8,17 @@ userRouter.get("/current", auth, async (req, res) => {
     const user = await User.findById(req.user._id).select("-password");
     res.send(user);
 });
-
+//register
 userRouter.post("/", async (req, res) => {
     // validate the request body first
-    const { error } = validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+
+    // const { error } = validate(req.body);
+    // if (error) return res.status(400).send(error.details[0].message);
 
     //find an existing user
+    console.log("register")
     let user = await User.findOne({ email: req.body.email });
+    console.log(user)
     if (user) return res.status(400).send("User already registered.");
 
     user = new User({
@@ -36,7 +39,9 @@ userRouter.post("/", async (req, res) => {
 userRouter.post('/login', async(req, res) => {
     //Login a registered user
     try {
+        console.log(req.body)
         const { email, password } = req.body;
+
         const user = await User.findOne({ email }).exec();
         if (!user) {
             return res.status(401).json({ message: 'Auth Failed' });
