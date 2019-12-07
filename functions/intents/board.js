@@ -2,13 +2,14 @@
 const {
     dialogflow, Suggestions, Table, List, Image
 } = require('actions-on-google');
-const axios = require('axios');
+const axios = require('../axios');
+
 // const welcome = require('welcome');
 
 
 const board = async (conv, params) => {
     console.log("board");
-    return await axios.get("http://localhost:5000/api/columns/all",
+    return await axios.get("/columns/all",
         {
             'headers': {'Authorization': token}
         })
@@ -35,7 +36,9 @@ const board = async (conv, params) => {
 
         }).catch((e) => {
             console.log(e);
-            conv.ask("error");
+            conv.ask("Please try again.");
+            conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
+
         })
 };
 

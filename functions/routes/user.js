@@ -6,8 +6,8 @@ const userRouter = express.Router();
 const jwt = require('jsonwebtoken');
 userRouter.get("/current", auth, async (req, res) => {
     const user = await User.findById(req.user._id).select("-password");
-    res.send(user);
-    return res.status(200).json({user});
+    // res.send(user);
+    return res.status(200);
 });
 //register
 userRouter.post("/", async (req, res) => {

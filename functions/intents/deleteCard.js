@@ -2,14 +2,13 @@
 const {
     dialogflow, Suggestions, Table, List, Image
 } = require('actions-on-google');
-const axios = require('axios');
-
+const axios = require('../axios');
 
 const deleteCard = async (conv, params) => {
     console.log("delete");
     let taskToDelete = params.taskName;
     console.log(params);
-    return axios.delete("http://localhost:5000/api/cards/delete", {
+    return axios.delete("/cards/delete", {
         data:
             {
                 "cardId": taskToDelete
@@ -21,7 +20,8 @@ const deleteCard = async (conv, params) => {
         conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
 
     }).catch((e) => {
-        conv.ask("error");
+        conv.ask("Please try again.");
+        conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
     })
 
 };

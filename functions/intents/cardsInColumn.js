@@ -2,14 +2,14 @@
 const {
     dialogflow, Suggestions, Table, List, Image
 } = require('actions-on-google');
-const axios = require('axios');
+const axios = require('../axios');
 
 
 const cardsInColumn = async (conv, params) => {
     console.log("cardsform column");
     let fromColumn = params.columnName;
     console.log(params);
-    return await axios.post("http://localhost:5000/api/columns/fetchColumnById", {
+    return await axios.post("columns/fetchColumnById", {
         "columnId": fromColumn,
     }, {
         'headers': {'Authorization': token}
@@ -21,7 +21,8 @@ const cardsInColumn = async (conv, params) => {
         conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
     }).catch((e) => {
         console.log(e);
-        conv.ask("error");
+        conv.ask("Please try again.");
+        conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
     })
 };
 

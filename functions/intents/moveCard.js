@@ -3,7 +3,7 @@ const {
     dialogflow, Suggestions, Table, List, Image
 } = require('actions-on-google');
 
-const axios = require('axios');
+const axios = require('../axios');
 
 const moveCard = async (conv, params) => {
     console.log("move");
@@ -11,7 +11,7 @@ const moveCard = async (conv, params) => {
     let toColumn = params.columnNameTo;
     let fromColumn = params.columnNameFrom;
     console.log(params);
-    return await axios.post("http://localhost:5000/api/cards/moveCard", {
+    return await axios.post("/cards/moveCard", {
         "originColumnId": fromColumn,
         "destColumnId": toColumn,
         "cardId": taskToMove
@@ -23,7 +23,8 @@ const moveCard = async (conv, params) => {
         conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
 
     }).catch((e) => {
-        conv.ask("error");
+        conv.ask("Please try again.");
+        conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
     })
 };
 

@@ -1,15 +1,14 @@
 /* eslint-disable promise/always-return */
 
 const {List, Image} = require('actions-on-google');
-
-
-const axios = require('axios');
+require('dotenv').config();
+const axios = require('../axios');
 token = "";
 const welcome = async (conv) => {
 
-    await axios.post("http://localhost:5000/api/users/login", {
-        "email": "el@g.com",
-        "password": "123"
+    await axios.post("/users/login", {
+        "email": process.env.email,
+        "password": process.env.pass
     }).then((res) => {
         token = res.data.token;
 
