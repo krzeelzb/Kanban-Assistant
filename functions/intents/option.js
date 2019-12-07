@@ -13,5 +13,25 @@ const option= (conv, params, option) => {
     conv.ask(new Suggestions(SELECTED_ITEM_SUGGESTIONS[option]));
 
 };
+const SELECTED_ITEM_CONTEXTS = {
+    'BOARD': 'board',
+    'createNewCard': 'createnewcard',
+    'deleteCard': 'deleteCard',
+    'moveCard': 'moveCard',
+};
+
+const SELECTED_ITEM_RESPONSES = {
+    'BOARD': 'Type or say one of the following:',
+    'createNewCard': 'Type or say one of the following:',
+    'deleteCard': 'Type or say one of the following:',
+    'moveCard': 'Type or say one of the following:',
+};
+
+const SELECTED_ITEM_SUGGESTIONS = {
+    'BOARD': ['Show me my Board', 'Tell me my Board'],
+    'createNewCard': ['Create new card', 'New thing to do'],
+    'deleteCard': ['Remove card', 'Delete card','Delete card named...'],
+    'moveCard': ['Move card', 'Move card from', 'Please move card named..'],
+};
 
 module.exports = option;

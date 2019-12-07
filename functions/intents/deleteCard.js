@@ -14,6 +14,8 @@ const deleteCard = async (conv, params) => {
             {
                 "cardId": taskToDelete
             }
+    }, {
+        'headers': {'Authorization': token}
     }).then((res) => {
         conv.ask("Card named " + taskToDelete + " has been removed");
         conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))

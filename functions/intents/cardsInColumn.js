@@ -11,6 +11,8 @@ const cardsInColumn = async (conv, params) => {
     console.log(params);
     return await axios.post("http://localhost:5000/api/columns/fetchColumnById", {
         "columnId": fromColumn,
+    }, {
+        'headers': {'Authorization': token}
     }).then((res) => {
         const cardIds = res.data.columns[0].cardIds;
         console.log(cardIds);

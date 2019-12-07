@@ -15,6 +15,8 @@ const moveCard = async (conv, params) => {
         "originColumnId": fromColumn,
         "destColumnId": toColumn,
         "cardId": taskToMove
+    }, {
+        'headers': {'Authorization': token}
     }).then(async (res) => {
 
         conv.ask("Card named " + params.taskName + " moved to column: " + toColumn);

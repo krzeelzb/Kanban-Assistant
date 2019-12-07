@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 userRouter.get("/current", auth, async (req, res) => {
     const user = await User.findById(req.user._id).select("-password");
     res.send(user);
+    return res.status(200).json({user});
 });
 //register
 userRouter.post("/", async (req, res) => {
@@ -16,9 +17,9 @@ userRouter.post("/", async (req, res) => {
     // if (error) return res.status(400).send(error.details[0].message);
 
     //find an existing user
-    console.log("register")
+    console.log("register");
     let user = await User.findOne({ email: req.body.email });
-    console.log(user)
+    console.log(user);
     if (user) return res.status(400).send("User already registered.");
 
     user = new User({
@@ -39,7 +40,7 @@ userRouter.post("/", async (req, res) => {
 userRouter.post('/login', async(req, res) => {
     //Login a registered user
     try {
-        console.log(req.body)
+        console.log(req.body);
         const { email, password } = req.body;
 
         const user = await User.findOne({ email }).exec();

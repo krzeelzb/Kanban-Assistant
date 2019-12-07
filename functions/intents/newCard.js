@@ -1,3 +1,4 @@
+/* eslint-disable promise/always-return */
 const {
     dialogflow, Suggestions, Table, List, Image
 } = require('actions-on-google');
@@ -14,7 +15,8 @@ const newCard = async (conv, params) => {
         },
         {
             "Accept": "application/json",
-            "Content-type": "application/json"
+            "Content-type": "application/json",
+            'Authorization': token
         }).then((res) => {
         conv.ask("New task created named: " + params.taskName);
         conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))

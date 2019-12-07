@@ -3,11 +3,15 @@ const {
     dialogflow, Suggestions, Table, List, Image
 } = require('actions-on-google');
 const axios = require('axios');
+// const welcome = require('welcome');
 
 
 const board = async (conv, params) => {
     console.log("board");
-    return await axios.get("http://localhost:5000/api/columns/all")
+    return await axios.get("http://localhost:5000/api/columns/all",
+        {
+            'headers': {'Authorization': token}
+        })
         .then((res) => {
             const columns = res.data.columns;
             const titles = columns.map(item => item.title);

@@ -1,10 +1,24 @@
+/* eslint-disable promise/always-return */
 
-const {
-    dialogflow, Suggestions, Table, List, Image
-} = require('actions-on-google');
+const {List, Image} = require('actions-on-google');
 
 
-const welcome = (conv) => {
+const axios = require('axios');
+token = "";
+const welcome = async (conv) => {
+
+    await axios.post("http://localhost:5000/api/users/login", {
+        "email": "el@g.com",
+        "password": "123"
+    }).then((res) => {
+        token = res.data.token;
+
+    }).catch((e) => {
+        console.log(e);
+        conv.ask("error");
+    });
+
+
     conv.ask('Welcome to Kanban Assistant. I can help you organise your Kanban board.');
     if (!conv.surface.capabilities.has('actions.capability.SCREEN_OUTPUT')) {
         return;
@@ -66,28 +80,6 @@ const welcome = (conv) => {
         },
     }));
 };
-
-const SELECTED_ITEM_CONTEXTS = {
-    'BOARD': 'board',
-    'createNewCard': 'createnewcard',
-    'deleteCard': 'deleteCard',
-    'moveCard': 'moveCard',
-};
-
-const SELECTED_ITEM_RESPONSES = {
-    'BOARD': 'Type or say one of the following:',
-    'createNewCard': 'Type or say one of the following:',
-    'deleteCard': 'Type or say one of the following:',
-    'moveCard': 'Type or say one of the following:',
-};
-
-const SELECTED_ITEM_SUGGESTIONS = {
-    'BOARD': ['Show me my Board', 'Tell me my Board'],
-    'createNewCard': ['Create new card', 'New thing to do'],
-    'deleteCard': ['Remove card', 'Delete card','Delete card named...'],
-    'moveCard': ['Move card', 'Move card from', 'Please move card named..'],
-};
-
 
 
 module.exports = welcome;
