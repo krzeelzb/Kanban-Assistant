@@ -9,7 +9,7 @@ const axios = require('../axios');
 
 const board = async (conv, params) => {
     console.log("board");
-    return await axios.get("/columns/all",
+    return await axios.get("/columns/",
         {
             'headers': {'Authorization': token}
         })

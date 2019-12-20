@@ -2,9 +2,7 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
-const {
-    dialogflow, Suggestions, Table, List, Image
-} = require('actions-on-google');
+const {dialogflow} = require('actions-on-google');
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
@@ -20,17 +18,15 @@ const board = require("./intents/board");
 const cardsFromColumn = require("./intents/cardsInColumn");
 
 
-
-app.intent('Default Welcome Intent',welcome);
-app.intent('actions.intent.OPTION',option);
-app.intent('createNewCard',newCard);
-app.intent('deleteCard',deleteCard);
-app.intent('moveCard',moveCard);
-app.intent('board',board);
+app.intent('Default Welcome Intent', welcome);
+app.intent('actions.intent.OPTION', option);
+app.intent('createNewCard', newCard);
+app.intent('deleteCard', deleteCard);
+app.intent('moveCard', moveCard);
+app.intent('board', board);
 
 //TODO: ładniejsza lista zadan do wykoniania
-app.intent('getCardsFromColumn',cardsFromColumn);
-
+app.intent('getCardsFromColumn', cardsFromColumn);
 
 
 // exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);

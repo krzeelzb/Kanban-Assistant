@@ -9,7 +9,7 @@ const cardsInColumn = async (conv, params) => {
     console.log("cardsform column");
     let fromColumn = params.columnName;
     console.log(params);
-    return await axios.post("columns/fetchColumnById", {
+    return await axios.post("columns/column", {
         "columnId": fromColumn,
     }, {
         'headers': {'Authorization': token}
@@ -18,11 +18,11 @@ const cardsInColumn = async (conv, params) => {
         console.log(cardIds);
         // console.log(columns.[])
         conv.ask("You have the following cards in " + fromColumn + " list: " + cardIds);
-        conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
+        conv.ask(new Suggestions('Show me my Board', 'Add a new Card', 'Delete Card', 'Move Card'))
     }).catch((e) => {
         console.log(e);
         conv.ask("Please try again.");
-        conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
+        conv.ask(new Suggestions('Show me my Board', 'Add a new Card', 'Delete Card', 'Move Card'))
     })
 };
 
