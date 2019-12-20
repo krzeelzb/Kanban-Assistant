@@ -1,11 +1,8 @@
 /* eslint-disable promise/always-return */
 const {
-    dialogflow, Suggestions, Table, List, Image
+    Suggestions, Table
 } = require('actions-on-google');
 const axios = require('../axios');
-
-// const welcome = require('welcome');
-
 
 const board = async (conv, params) => {
     console.log("board");
@@ -53,6 +50,5 @@ function transpose(original) {
     }
     return copy;
 }
-
 
 module.exports = board;

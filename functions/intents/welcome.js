@@ -5,19 +5,14 @@ require('dotenv').config();
 const axios = require('../axios');
 token = "";
 const welcome = async (conv) => {
-
     await axios.post("/users/login", {
         "email": process.env.email,
         "password": process.env.pass
     }).then((res) => {
         token = res.data.token;
-
     }).catch((e) => {
-        console.log(e);
         conv.ask("error");
     });
-
-
     conv.ask('Welcome to Kanban Assistant. I can help you organise your Kanban board.');
     if (!conv.surface.capabilities.has('actions.capability.SCREEN_OUTPUT')) {
         return;

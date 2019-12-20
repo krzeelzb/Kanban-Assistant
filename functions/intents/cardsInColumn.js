@@ -1,14 +1,11 @@
 /* eslint-disable promise/always-return */
 const {
-    dialogflow, Suggestions, Table, List, Image
+    Suggestions
 } = require('actions-on-google');
 const axios = require('../axios');
 
-
 const cardsInColumn = async (conv, params) => {
-    console.log("cardsform column");
     let fromColumn = params.columnName;
-    console.log(params);
     return await axios.post("columns/column", {
         "columnId": fromColumn,
     }, {
@@ -16,7 +13,6 @@ const cardsInColumn = async (conv, params) => {
     }).then((res) => {
         const cardIds = res.data.columns[0].cardIds;
         console.log(cardIds);
-        // console.log(columns.[])
         conv.ask("You have the following cards in " + fromColumn + " list: " + cardIds);
         conv.ask(new Suggestions('Show me my Board', 'Add a new Card', 'Delete Card', 'Move Card'))
     }).catch((e) => {
@@ -25,6 +21,5 @@ const cardsInColumn = async (conv, params) => {
         conv.ask(new Suggestions('Show me my Board', 'Add a new Card', 'Delete Card', 'Move Card'))
     })
 };
-
 
 module.exports = cardsInColumn;

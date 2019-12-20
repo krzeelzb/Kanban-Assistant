@@ -1,13 +1,11 @@
 /* eslint-disable promise/always-return */
 const {
-    dialogflow, Suggestions, Table, List, Image
+    Suggestions
 } = require('actions-on-google');
 const axios = require('../axios');
 
 const deleteCard = async (conv, params) => {
-    console.log("delete");
     let taskToDelete = params.taskName;
-    console.log(params);
     return axios.delete("/cards/delete", {
         data:
             {
@@ -23,7 +21,6 @@ const deleteCard = async (conv, params) => {
         conv.ask("Please try again.");
         conv.ask(new Suggestions('Show me my Board', 'Add new Card', 'Delete Card', 'Move Card'))
     })
-
 };
 
 module.exports = deleteCard;
