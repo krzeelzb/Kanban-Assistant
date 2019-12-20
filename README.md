@@ -6,4 +6,4 @@ The functionalities include:
 - moving the card to different column
 - displaying Kanban Table
 
-The project was implenanted as a part of Bachelor Thesis. 
+The project was implemented as a part of Bachelor Thesis. 
